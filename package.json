@@ -1,0 +1,15 @@
+{
+  "name": "operacao-dossie",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Jogo de stealth e sátira política para navegador.",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="Operação Dossiê: um jogo de stealth, fuga e sátira política. Escolha um personagem, recolha os documentos, despiste os petistas e chegue ao avião.">
+  <title>Operação Dossiê — O Jogo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f5bf45'/%3E%3Cpath d='M18 13h20l9 9v29H18z' fill='%23080d18'/%3E%3Cpath d='M38 13v10h9' fill='none' stroke='%23f5bf45' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="app">
+    <section id="game-shell" aria-label="Operação Dossiê">
+      <canvas id="game" width="1280" height="720" aria-label="Área do jogo"></canvas>
+      <div class="screen-texture" aria-hidden="true"></div>
+
+      <header id="hud" class="hidden" aria-live="polite">
+        <div class="hud-block mission-chip">
+          <span class="micro">OPERAÇÃO EM CURSO</span>
+          <strong id="objective">LOCALIZE O DOSSIÊ</strong>
+        </div>
+        <div class="hud-center">
+          <div class="document-count"><span id="doc-count">0</span><small>/ 6 DOSSIÊS</small></div>
+          <div class="document-track" id="document-track" aria-hidden="true"></div>
+        </div>
+        <div class="hud-block hud-numbers">
+          <div><span class="micro">TEMPO</span><strong id="timer">01:45</strong></div>
+          <div><span class="micro">PONTOS</span><strong id="score">000000</strong></div>
+        </div>
+      </header>
+
+      <div id="status-bar" class="hidden">
+        <div class="vital-group">
+          <span class="micro">SANGUE FRIO</span>
+          <div id="hearts" class="hearts"></div>
+        </div>
+        <div class="alert-group">
+          <div class="alert-label"><span class="micro">NÍVEL DE ALERTA</span><span id="alert-label">DISCRETO</span></div>
+          <div class="alert-track"><div id="alert-fill"></div></div>
+        </div>
+        <div class="abilities">
+          <div class="ability" id="dash-ability"><kbd>ESPAÇO</kbd><span>ARRANQUE</span><i></i></div>
+          <div class="ability" id="decoy-ability"><kbd>E</kbd><span>DISTRAÇÃO</span><i></i></div>
+        </div>
+      </div>
+
+      <div id="toast" role="status"></div>
+      <div id="location-tag" class="hidden"><span></span><strong>AEROPORTO INTERNACIONAL</strong><small>TERMINAL 13 · 02:47</small></div>
+
+      <div class="corner-controls">
+        <button id="pause-button" class="icon-button hidden" type="button" aria-label="Pausar jogo">II</button>
+        <button id="sound-button" class="icon-button" type="button" aria-label="Desativar som">SOM</button>
+      </div>
+
+      <section id="menu-screen" class="screen">
+        <div class="menu-layout">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="live-dot"></span> ARQUIVO 01 · SÁTIRA FICTÍCIA</div>
+            <h1>OPERAÇÃO<br><em>DOSSIÊ</em></h1>
+            <p class="tagline">Pegue os papéis. Finja que é paisagem.<br>E tente não explicar nada.</p>
+            <div class="genre-tags"><span>STEALTH</span><span>FUGA</span><span>MEME</span></div>
+            <div class="difficulty" role="group" aria-label="Escolha a dificuldade">
+              <span>DIFICULDADE</span>
+              <button type="button" data-difficulty="facil">FÁCIL</button>
+              <button type="button" data-difficulty="normal" class="selected" aria-pressed="true">NORMAL</button>
+              <button type="button" data-difficulty="dificil">DIFÍCIL</button>
+            </div>
+            <div class="menu-actions">
+              <button id="start-button" class="primary-button" type="button"><span>INICIAR OPERAÇÃO</span><b>→</b></button>
+              <button id="how-button" class="text-button" type="button">COMO JOGAR</button>
+            </div>
+            <p id="best-score" class="best-score">MELHOR PONTUAÇÃO · 000000</p>
+          </div>
+
+          <aside class="case-file" aria-label="Resumo da missão">
+            <div class="paper-clip" aria-hidden="true"></div>
+            <div class="case-header"><span>CONFIDENCIAL</span><small>CASO Nº 013</small></div>
+            <div class="portrait" aria-hidden="true">
+              <div class="portrait-halftone"></div>
+              <div class="portrait-person">
+                <i class="portrait-hair"></i><i class="portrait-head"></i><i class="portrait-body"></i><i class="portrait-tie"></i>
+              </div>
+              <div class="portrait-stamp">PROCURA-SE<br><small>O EXPLICADOR</small></div>
+            </div>
+            <div class="case-body">
+              <span class="micro">BRIEFING DA MISSÃO</span>
+              <h2>Nada a declarar.</h2>
+              <p>Seis dossiês sumiram pelo terminal. Recupere todos, despiste os petistas e alcance o avião antes do tempo acabar.</p>
+              <ul>
+                <li><b>01</b><span>Recolha os documentos dourados</span></li>
+                <li><b>02</b><span>Use obstáculos para sumir de vista</span></li>
+                <li><b>03</b><span>Chegue ao embarque com vida</span></li>
+              </ul>
+            </div>
+            <div class="case-footer">UMA HISTÓRIA ABSURDAMENTE FICTÍCIA</div>
+          </aside>
+        </div>
+        <footer class="menu-footer"><span>WASD / SETAS <b>MOVER</b></span><span>ESPAÇO <b>ARRANQUE</b></span><span>E <b>DISTRAÇÃO</b></span><span>ESC <b>PAUSAR</b></span></footer>
+      </section>
+
+      <section id="how-screen" class="screen hidden">
+        <div class="modal wide-modal">
+          <div class="eyebrow">MANUAL DE SOBREVIVÊNCIA</div>
+          <h2>Discrição é opcional.<br><em>Sobreviver, não.</em></h2>
+          <div class="instruction-grid">
+            <article><span class="instruction-number">01</span><div class="instruction-art document-icon"></div><h3>RECOLHA</h3><p>Siga a seta dourada e colete os 6 dossiês espalhados pelo aeroporto.</p></article>
+            <article><span class="instruction-number">02</span><div class="instruction-art cone-icon"></div><h3>DESPISTE</h3><p>Evite os cones de visão. Bancos, plantas e bagagens bloqueiam o olhar.</p></article>
+            <article><span class="instruction-number">03</span><div class="instruction-art dash-icon">»</div><h3>IMPROVISE</h3><p>Use o arranque para escapar e jogue um jornal com E para atrair os petistas.</p></article>
+          </div>
+          <p class="touch-instructions">No celular, use o controle analógico e os botões de ação na tela.</p>
+          <button id="how-start-button" class="primary-button" type="button"><span>ENTENDI. VAMOS.</span><b>→</b></button>
+          <button id="how-back-button" class="text-button" type="button">VOLTAR</button>
+        </div>
+      </section>
+
+      <section id="character-screen" class="screen hidden">
+        <div class="character-select">
+          <div class="eyebrow">ESCALAÇÃO DA OPERAÇÃO</div>
+          <h2>Escolha seu <em>explicador.</em></h2>
+          <p>Família e aliados em campo. Cada personagem tem uma vantagem diferente.</p>
+          <div id="character-grid" class="character-grid" role="radiogroup" aria-label="Escolha um personagem"></div>
+          <div class="character-selection-bar">
+            <div><span class="micro">VANTAGEM ATIVA</span><strong id="selected-character-perk">FLÁVIO · +1 CHANCE DE ERRO</strong></div>
+            <button id="confirm-character-button" class="primary-button" type="button"><span>CONFIRMAR E FUGIR</span><b>→</b></button>
+          </div>
+          <button id="character-back-button" class="text-button" type="button">VOLTAR AO MENU</button>
+        </div>
+      </section>
+
+      <section id="pause-screen" class="screen hidden">
+        <div class="modal compact-modal">
+          <div class="eyebrow">TEMPO MORTO</div>
+          <h2>Operação pausada.</h2>
+          <p>Os petistas fingem que não viram. Aproveite.</p>
+          <button id="resume-button" class="primary-button" type="button"><span>CONTINUAR</span><b>→</b></button>
+          <button id="restart-button" class="text-button" type="button">RECOMEÇAR MISSÃO</button>
+          <button id="pause-menu-button" class="text-button muted" type="button">SAIR PARA O MENU</button>
+        </div>
+      </section>
+
+      <section id="result-screen" class="screen hidden">
+        <div class="modal result-modal">
+          <div id="result-eyebrow" class="eyebrow">MISSÃO CUMPRIDA</div>
+          <h2 id="result-title">Nada a declarar.</h2>
+          <p id="result-message">Os papéis embarcaram. As explicações ficaram para o próximo voo.</p>
+          <div class="result-stats">
+            <div><span class="micro">PONTUAÇÃO</span><strong id="result-score">000000</strong></div>
+            <div><span class="micro">DOSSIÊS</span><strong id="result-docs">6 / 6</strong></div>
+            <div><span class="micro">TEMPO</span><strong id="result-time">00:32</strong></div>
+          </div>
+          <div id="new-record" class="new-record hidden">NOVO RECORDE</div>
+          <button id="retry-button" class="primary-button" type="button"><span>JOGAR DE NOVO</span><b>↻</b></button>
+          <button id="result-menu-button" class="text-button" type="button">VOLTAR AO MENU</button>
+        </div>
+      </section>
+
+      <div id="touch-controls" class="hidden" aria-hidden="true">
+        <div id="joystick-zone"><div id="joystick-base"><div id="joystick-knob"></div></div></div>
+        <div class="touch-actions">
+          <button id="touch-decoy" type="button"><span>E</span>JORNAL</button>
+          <button id="touch-dash" class="touch-primary" type="button"><span>»</span>CORRER</button>
+        </div>
+      </div>
+
+      <section id="rotate-screen" class="screen">
+        <div class="modal compact-modal"><div class="rotate-phone" aria-hidden="true"></div><h2>Vire o aparelho.</h2><p>Essa operação precisa de uma visão mais ampla. Jogue na horizontal.</p></div>
+      </section>
+    </section>
+    <p class="legal-note">Jogo de sátira política. Personagens e acontecimentos tratados de forma humorística e fictícia.</p>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
