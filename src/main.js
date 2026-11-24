@@ -27,10 +27,10 @@ let selectedDifficulty = 'normal';
 let selectedCharacter = DEFAULT_CHARACTER;
 let toastTimeout;
 let bestScore = 0;
-try { bestScore = Number(localStorage.getItem('operacao-dossie.best') || 0); } catch { /* armazenamento pode estar indisponível */ }
+try { bestScore = Number(localStorage.getItem('eclipse-terminal-13.best') || 0); } catch { /* armazenamento pode estar indisponível */ }
 $('#best-score').textContent = `MELHOR PONTUAÇÃO · ${scoreFormatter(bestScore)}`;
 
-try { sound.muted = localStorage.getItem('operacao-dossie.muted') === 'true'; } catch { /* sem persistência */ }
+try { sound.muted = localStorage.getItem('eclipse-terminal-13.muted') === 'true'; } catch { /* sem persistência */ }
 
 function hideScreens() {
   Object.values(screens).forEach((screen) => screen.classList.add('hidden'));
@@ -56,7 +56,7 @@ function updateHud(data) {
   $('#timer').textContent = formatTime(data.timeLeft);
   $('#timer').classList.toggle('danger', data.timeLeft <= 15);
   $('#score').textContent = scoreFormatter(data.score);
-  $('#objective').textContent = data.exitOpen ? 'ALCANCE O AVIÃO' : 'LOCALIZE O DOSSIÊ';
+  $('#objective').textContent = data.exitOpen ? 'ALCANCE O SHUTTLE' : 'LOCALIZE O NÚCLEO';
 
   const track = $('#document-track');
   if (!track.children.length) {
@@ -79,7 +79,7 @@ function updateHud(data) {
   const alertColor = data.alert > 65 ? '#ff665e' : data.alert > 30 ? '#f5bf45' : '#80e6c3';
   $('#alert-fill').style.background = alertColor;
   $('#alert-label').style.color = alertColor;
-  $('#alert-label').textContent = data.seen ? 'DETECTADO' : data.alert > 65 ? 'QUASE LÁ' : data.alert > 30 ? 'SUSPEITO' : 'DISCRETO';
+  $('#alert-label').textContent = data.seen ? 'RASTREADO' : data.alert > 65 ? 'QUASE LÁ' : data.alert > 30 ? 'SUSPEITO' : 'DISCRETO';
 
   const dashReady = 1 - clamp(data.dashCooldown / data.dashMax, 0, 1);
   const decoyReady = 1 - clamp(data.decoyCooldown / data.decoyMax, 0, 1);
@@ -186,7 +186,7 @@ const game = new Game(canvas, sound, {
     const isRecord = result.score > bestScore;
     if (isRecord) {
       bestScore = result.score;
-      try { localStorage.setItem('operacao-dossie.best', String(bestScore)); } catch { /* sem persistência */ }
+      try { localStorage.setItem('eclipse-terminal-13.best', String(bestScore)); } catch { /* sem persistência */ }
       $('#best-score').textContent = `MELHOR PONTUAÇÃO · ${scoreFormatter(bestScore)}`;
     }
     $('#new-record').classList.toggle('hidden', !isRecord || result.score === 0);
@@ -195,15 +195,15 @@ const game = new Game(canvas, sound, {
     $('#result-time').textContent = formatTime(result.timeLeft);
 
     if (result.won) {
-      $('#result-eyebrow').textContent = 'MISSÃO CUMPRIDA';
-      $('#result-title').textContent = 'Nada a declarar.';
-      $('#result-message').textContent = 'Os papéis embarcaram. As explicações ficaram para o próximo voo.';
+      $('#result-eyebrow').textContent = 'EXTRAÇÃO CONCLUÍDA';
+      $('#result-title').textContent = 'Dados recuperados.';
+      $('#result-message').textContent = 'Os núcleos estão a bordo. Terminal 13 entrou em lockdown.';
     } else {
-      $('#result-eyebrow').textContent = result.reason === 'time' ? 'VOO PERDIDO' : 'FIM DA LINHA';
-      $('#result-title').textContent = result.reason === 'time' ? 'Atraso justificado?' : 'Pego no flagra.';
+      $('#result-eyebrow').textContent = result.reason === 'time' ? 'TRANSPORTE PARTIU' : 'MISSÃO INTERROMPIDA';
+      $('#result-title').textContent = result.reason === 'time' ? 'O tempo acabou.' : 'Rastro detectado.';
       $('#result-message').textContent = result.reason === 'time'
-        ? 'O avião partiu sem os dossiês. Da próxima vez, menos reunião e mais arranque.'
-        : 'Os petistas pediram uma explicação. O plano não sobreviveu ao primeiro questionário.';
+        ? 'O shuttle partiu sem a equipe. Use os atalhos e planeje a rota de extração.'
+        : 'Os drones fecharam o perímetro. Recalcule a rota e tente outra vez.';
     }
   },
 });
@@ -253,7 +253,7 @@ function updateSoundButton() {
 }
 function toggleSound() {
   sound.setMuted(!sound.muted);
-  try { localStorage.setItem('operacao-dossie.muted', String(sound.muted)); } catch { /* sem persistência */ }
+  try { localStorage.setItem('eclipse-terminal-13.muted', String(sound.muted)); } catch { /* sem persistência */ }
   updateSoundButton();
   if (!sound.muted) sound.sfx('click');
 }

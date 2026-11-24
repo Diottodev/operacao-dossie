@@ -147,7 +147,7 @@ export class Game {
     this.state = 'playing';
     this.sound.startMusic();
     this.hooks.onStart?.();
-    this.toast(`${this.character.shortName} EM CAMPO · RECOLHA O PRIMEIRO DOSSIÊ`);
+    this.toast(`${this.character.shortName} EM CAMPO · RECUPERE O PRIMEIRO NÚCLEO`);
   }
 
   setInput(x, y) {
@@ -345,13 +345,13 @@ export class Game {
     if (this.documents >= TOTAL_DOCUMENTS) {
       this.document = null;
       this.exitOpen = true;
-      this.toast('TODOS OS DOSSIÊS · CORRA PARA O AVIÃO');
+      this.toast('TODOS OS NÚCLEOS · CORRA PARA O SHUTTLE');
       this.alert = Math.max(this.alert, 25);
       return;
     }
 
     this.document = { ...this.documentPositions[this.documents] };
-    this.toast(`DOSSIÊ ${this.documents}/${TOTAL_DOCUMENTS} · +4 SEGUNDOS`);
+      this.toast(`NÚCLEO ${this.documents}/${TOTAL_DOCUMENTS} · +4 SEGUNDOS`);
     if (this.documents === 2) {
       this.drones.push({ x: 900, y: 540, centerX: 900, centerY: 540, radiusX: 250, radiusY: 145, orbitSpeed: .42, phase: 0, angle: 0, vision: 230, fov: 1.5, sees: false });
       this.toast('DRONE DE SEGURANÇA ATIVADO');

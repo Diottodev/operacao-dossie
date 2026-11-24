@@ -1,9 +1,9 @@
 {
-  "name": "operacao-dossie",
+  "name": "eclipse-terminal-13",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Jogo de stealth e sátira política para navegador.",
+  "description": "Jogo arcade de infiltração e extração em um terminal futurista.",
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",

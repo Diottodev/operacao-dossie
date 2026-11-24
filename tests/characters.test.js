@@ -5,10 +5,10 @@ import { CHARACTERS, DEFAULT_CHARACTER } from '../src/characters.js';
 test('elenco contém os seis personagens jogáveis com identidades únicas', () => {
   assert.equal(CHARACTERS.length, 6);
   assert.equal(new Set(CHARACTERS.map((character) => character.id)).size, 6);
-  for (const id of ['flavio', 'jair', 'eduardo', 'carlos', 'michelle', 'pavanato']) {
+  for (const id of ['echo', 'nova', 'vector', 'glitch', 'ghost', 'titan']) {
     assert.ok(CHARACTERS.some((character) => character.id === id));
   }
-  assert.equal(DEFAULT_CHARACTER.id, 'flavio');
+  assert.equal(DEFAULT_CHARACTER.id, 'echo');
 });
 
 test('todos os personagens têm arte e atributos válidos', () => {
@@ -27,9 +27,9 @@ test('todos os personagens têm arte e atributos válidos', () => {
 });
 
 test('vantagens especiais alteram os atributos esperados', () => {
-  assert.equal(CHARACTERS.find((character) => character.id === 'flavio').livesBonus, 1);
-  assert.ok(CHARACTERS.find((character) => character.id === 'jair').speed > 1);
-  assert.ok(CHARACTERS.find((character) => character.id === 'eduardo').stealth < 1);
-  assert.ok(CHARACTERS.find((character) => character.id === 'carlos').decoyCooldown < 1);
-  assert.ok(CHARACTERS.find((character) => character.id === 'pavanato').dashCooldown < 1);
+  assert.equal(CHARACTERS.find((character) => character.id === 'echo').livesBonus, 1);
+  assert.ok(CHARACTERS.find((character) => character.id === 'nova').speed > 1);
+  assert.ok(CHARACTERS.find((character) => character.id === 'vector').stealth < 1);
+  assert.ok(CHARACTERS.find((character) => character.id === 'glitch').decoyCooldown < 1);
+  assert.ok(CHARACTERS.find((character) => character.id === 'titan').dashCooldown < 1);
 });
